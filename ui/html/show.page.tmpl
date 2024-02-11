@@ -1,0 +1,19 @@
+{{template "base" .}}
+
+{{define "title"}}News #{{.News.ID}}{{end}}
+
+{{define "main"}}
+    {{with .News}}
+    <div class='news'>
+        <div class='metadata'>
+            <strong>{{.Title}}</strong>
+            <span>#{{.ID}}</span>
+        </div>
+        <pre><code>{{.Content}}</code></pre>
+        <div class='metadata'>
+           <time>Created: {{humanDate .Created}}</time>
+        </div>
+    </div>
+    {{end}}
+{{end}}
+
