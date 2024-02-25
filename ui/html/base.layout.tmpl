@@ -13,18 +13,28 @@
 <body>
     <header>
         <h1><a href='/'>AITU News</a></h1>
+                  {{if .IsAuthenticated}}
+                              {{if .IsTeacher}}
+                                  <p>Teacher</p>
+                              {{else}}
+                                  <p>Student</p>
+                              {{end}}
+                          {{end}}
+
     </header>
     <nav>
         <div>
             <a href='/'>Home</a>
             {{if .IsAuthenticated}}
-            <a href='/snippet/create'>Create snippet</a>
-            {{end}}
+
+ {{if .IsTeacher}}
             <a href='/news/create'>Create News</a>
+   {{end}}
             <a href='/category/student'>For Students</a>
             <a href='/category/staff'>For Staff</a>
             <a href='/category/applicant'>For Applicants</a>
             <a href='/category/research'>For Researches</a>
+            {{end}}
         </div>
 
         <div>

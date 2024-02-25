@@ -16,6 +16,7 @@ type templateData struct {
 	Form            *forms.Form
 	News            *models.News
 	New2s           []*models.News
+	IsTeacher       bool
 }
 
 func humanDate(t time.Time) string {

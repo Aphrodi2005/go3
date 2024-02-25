@@ -64,6 +64,10 @@ func (app *application) category(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createNewsForm(w http.ResponseWriter, r *http.Request) {
+	if !app.isAuthenticated(r) || !app.isTeacher(r) {
+		app.clientError(w, http.StatusForbidden)
+		return
+	}
 	app.render(w, r, "create.page.tmpl", &templateData{
 		Form: forms.New(nil),
 	})
@@ -110,17 +114,29 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	}
 	// Validate the form contents using the form helper we made earlier.
 	form := forms.New(r.PostForm)
-	form.Required("name", "email", "password")
+	form.Required("name", "email", "password", "role")
 	form.MaxLength("name", 255)
 	form.MaxLength("email", 255)
 	form.MatchesPattern("email", forms.EmailRX)
-	form.MinLength("password", 10)
+	form.MinLength("password", 3)
 
 	if !form.Valid() {
 		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
 		return
 	}
-	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
+	role := form.Get("role")
+	if role == "teacher" {
+		app.session.Put(r, "role", models.RoleTeacher)
+	}
+	if role == "student" {
+		app.session.Put(r, "role", models.RoleStudent)
+	}
+	if role != "teacher" && role != "student" {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"), form.Get("role"))
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			form.Errors.Add("email", "Address is already in use")
@@ -131,7 +147,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	app.session.Put(r, "flash", "Your signup was successful. Please log in.")
-	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
@@ -159,9 +175,9 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	// Add the ID of the current user to the session, so that they are now 'logged
-	// in'.
+
 	app.session.Put(r, "authenticatedUserID", id)
+
 	// Redirect the user to the create snippet page.
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -177,4 +193,8 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 }
 func (app *application) isAuthenticated(r *http.Request) bool {
 	return app.session.Exists(r, "authenticatedUserID")
+}
+func (app *application) isTeacher(r *http.Request) bool {
+	role := app.session.GetString(r, "role")
+	return role == models.RoleTeacher
 }

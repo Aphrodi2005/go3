@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	RoleTeacher = "teacher"
+	RoleStudent = "student"
+)
+
 var (
 	ErrNoRecord           = errors.New("models: no matching record found")
 	ErrInvalidCredentials = errors.New("models: invalid credentials")
@@ -26,4 +31,5 @@ type User struct {
 	HashedPassword []byte
 	Created        time.Time
 	Active         bool
+	Role           string
 }

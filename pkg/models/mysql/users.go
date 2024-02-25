@@ -47,16 +47,16 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 	return id, nil
 }
 
-func (m *UserModel) Insert(name, email, password string) error {
+func (m *UserModel) Insert(name, email, password, role string) error {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return err
 	}
-	stmt := `INSERT INTO users (name, email, hashed_password, created)
-VALUES(?, ?, ?, UTC_TIMESTAMP())`
+	stmt := `INSERT INTO users (name, email, hashed_password, role , created)
+VALUES(?, ?, ?,?, UTC_TIMESTAMP())`
 
-	_, err = m.DB.Exec(stmt, name, email, string(hashedPassword))
+	_, err = m.DB.Exec(stmt, name, email, string(hashedPassword), role)
 	if err != nil {
 
 		var mySQLError *mysql.MySQLError
