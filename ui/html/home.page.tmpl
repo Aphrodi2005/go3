@@ -3,29 +3,74 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-    <h2>Latest News</h2>
-    {{if .New2s}}
+    <h2>Latest Movies</h2>
+    {{if .Movie2s}}
      <table>
         <tr>
             <th>ID</th>
             <th>Title</th>
-            <th>Content</th>
-            <th>Details</th>
-            <th>Created</th>
-            <th>Category</th>
+            <th>Genre</th>
+            <th>Rating</th>
+            <th>Session</th>
+            <th>Actions</th>
         </tr>
-        {{range .New2s}}
+        {{range .Movie2s}}
         <tr>
-            <td><a href='/news/{{.ID}}'>{{.ID}}</a></td>
+            <td><a href='/movies/{{.ID}}'>{{.ID}}</a></td>
             <td>#{{.Title}}</td>
-            <td>#{{.Content}}</td>
-            <td>#{{.Details}}</td>
-            <td>{{humanDate .Created}}</td>
-            <td>#{{.Category}}</td>
+            <td>#{{.Genre}}</td>
+            <td>#{{.Rating}}</td>
+            <td>{{.SessionTime}}</td>
+            <td>
+                {{if .IsAdmin}}
+                    <button class="btn btn-primary mb-4" onclick="toggleUpdateForm('{{ .ID }}')">Update</button>
+                    <form id="update-form-{{ .ID }}" method="POST" action="/updateMovie" style="display: none;">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+                        <!-- Update form fields -->
+                    </form>
+                    <form id="delete-form-{{ .ID }}" onsubmit="deleteMovie('{{ .ID }}'); return false;">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+                        <button class="btn btn-danger delete-movie-btn" type="submit">Delete</button>
+                    </form>
+                {{else}}
+                    <form method="POST" action="/buyTicket">
+                        <input type="hidden" name="movie_id" value="{{ .ID }}">
+                        <input type="hidden" name="movie_title" value="{{ .Title }}">
+                        <input type="hidden" name="session_time" value="{{ .SessionTime }}">
+                        <button class="btn btn-success buy-ticket-btn" type="submit">Buy Ticket</button>
+                    </form>
+                {{end}}
+            </td>
         </tr>
         {{end}}
     </table>
     {{else}}
         <p>There's nothing to see here... yet!</p>
     {{end}}
+    <script src="/static/js/main.js"></script>
+    <script>
+        function deleteMovie(movieId) {
+            if (confirm('Are you sure you want to delete this movie?')) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('DELETE', '/deleteMovie?id=' + movieId, true);
+                xhr.setRequestHeader('Content-Type', 'application/json'); // Set content type
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        alert('Movie deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Error deleting movie. Please try again.');
+                    }
+                };
+
+                xhr.send();
+            }
+        }
+
+        function toggleUpdateForm(movieId) {
+            var updateForm = document.getElementById('update-form-' + movieId);
+            updateForm.style.display = (updateForm.style.display === 'none' || updateForm.style.display === '') ? 'block' : 'none';
+        }
+    </script>
 {{end}}

@@ -18,14 +18,15 @@ type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger
 	session       *sessions.Session
-	news          *mysql.NewsModel
+	movies        *mysql.MovieModel
 	templateCache map[string]*template.Template
 	users         *mysql.UserModel
+	tickets       *mysql.TicketModel
 }
 
 func main() {
 	addr := flag.String("addr", ":5000", "HTTP network address")
-	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", "web:pass@/movies?parseTime=true", "MySQL data source name")
 	flag.Parse()
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key")
 	flag.Parse()
@@ -51,9 +52,10 @@ func main() {
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		session:       session,
-		news:          &mysql.NewsModel{DB: db},
+		movies:        &mysql.MovieModel{DB: db},
 		templateCache: templateCache,
 		users:         &mysql.UserModel{DB: db},
+		tickets:       &mysql.TicketModel{DB: db},
 	}
 	tlsConfig := &tls.Config{
 		PreferServerCipherSuites: true,

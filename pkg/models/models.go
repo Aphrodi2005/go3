@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	RoleTeacher = "teacher"
-	RoleStudent = "student"
+	RoleAdmin    = "admin"
+	Rolesupplier = "supplier"
 )
 
 var (
@@ -16,13 +16,19 @@ var (
 	ErrDuplicateEmail     = errors.New("models: duplicate email")
 )
 
-type News struct {
-	ID       int
-	Title    string
-	Content  string
-	Details  string
-	Created  time.Time
-	Category string
+var (
+	ErrNoMovie   = errors.New("models: no matching movie found")
+	ErrDuplicate = errors.New("models: duplicate movie title")
+)
+
+type Movie struct {
+	ID          int
+	Title       string
+	Genre       string
+	Rating      int
+	SessionTime time.Time
+	CSRFToken   string
+	IsAdmin     string
 }
 type User struct {
 	ID             int
@@ -30,6 +36,12 @@ type User struct {
 	Email          string
 	HashedPassword []byte
 	Created        time.Time
-	Active         bool
 	Role           string
+}
+type Ticket struct {
+	ID          int
+	UserID      int
+	MovieID     int
+	MovieTitle  string
+	SessionTime time.Time
 }

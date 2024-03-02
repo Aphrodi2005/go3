@@ -1,19 +1,31 @@
 {{template "base" .}}
 
-{{define "title"}}News #{{.News.ID}}{{end}}
+{{define "title"}}Movies #{{.Movies.ID}}{{end}}
 
 {{define "main"}}
-    {{with .News}}
-    <div class='news'>
+    {{with .Movies}}
+    <div class='movies'>
         <div class='metadata'>
             <strong>{{.Title}}</strong>
             <span>#{{.ID}}</span>
         </div>
         <pre><code>{{.Content}}</code></pre>
         <div class='metadata'>
-           <time>Created: {{humanDate .Created}}</time>
+           <time>Created: {{.SessionTime}}</time>
         </div>
+        {{if .IsAuthenticated}}
+            {{if .IsTeacher}}
+                <div class='actions'>
+                    <form action='/movies/update/{id}' method='GET'>
+                        <button>Edit</button>
+                    </form>
+                    <form action='/movies/delete/{id}' method='DELETE'>
+                        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                        <button>Delete</button>
+                    </form>
+                </div>
+            {{end}}
+        {{end}}
     </div>
     {{end}}
 {{end}}
-

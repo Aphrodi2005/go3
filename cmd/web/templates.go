@@ -14,9 +14,11 @@ type templateData struct {
 	Flash           string
 	IsAuthenticated bool
 	Form            *forms.Form
-	News            *models.News
-	New2s           []*models.News
-	IsTeacher       bool
+	Movies          *models.Movie
+	Movie2s         []*models.Movie
+	IsAdmin         bool
+	User            *models.User
+	Ticket          *models.Ticket
 }
 
 func humanDate(t time.Time) string {

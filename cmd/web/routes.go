@@ -14,14 +14,15 @@ func (app *application) routes() http.Handler {
 	mux := pat.New()
 
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
-	mux.Get("/category/student", dynamicMiddleware.ThenFunc(app.category))
-	mux.Get("/category/staff", dynamicMiddleware.ThenFunc(app.category))
-	mux.Get("/category/applicant", dynamicMiddleware.ThenFunc(app.category))
-	mux.Get("/category/research", dynamicMiddleware.ThenFunc(app.category))
-	mux.Get("/news/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createNewsForm))
-	mux.Post("/news/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createNews))
-
-	mux.Get("/news/:id", dynamicMiddleware.ThenFunc(app.showNews))
+	mux.Get("/genre/horror", dynamicMiddleware.ThenFunc(app.genre))
+	mux.Get("/genre/comedy", dynamicMiddleware.ThenFunc(app.genre))
+	mux.Get("/genre/drama", dynamicMiddleware.ThenFunc(app.genre))
+	mux.Get("/genre/scifi", dynamicMiddleware.ThenFunc(app.genre))
+	mux.Get("/movies/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createMoviesForm))
+	mux.Post("/movies/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createMovies))
+	mux.Post("/updateMovie", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.updateMovie))
+	mux.Del("/movies/delete", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.deleteMovie))
+	mux.Get("/movies/:id", dynamicMiddleware.ThenFunc(app.showMovies))
 
 	mux.Get("/user/signup", dynamicMiddleware.ThenFunc(app.signupUserForm))
 	mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.signupUser))

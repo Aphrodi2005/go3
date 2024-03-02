@@ -1,45 +1,41 @@
 {{template "base" .}}
 
-{{define "title"}}Create News{{end}}
+{{define "title"}}Create Movies{{end}}
 
 {{define "main"}}
-<form action='/news/create' method='POST'>
+<form id="create-form" method="post" action="/movies/create" >
 <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
     {{with .Form}}
 
-    <div>
-        <label>Title:</label>
-        {{with .Errors.Get "title"}}
-            <label class='error'>{{.}}</label>
-        {{end}}
-        <input type='text' name='title' value='{{.Get "title"}}'>
-    </div>
 
-    <div>
-        <label>Content:</label>
-        {{with .Errors.Get "content"}}
-            <label class='error'>{{.}}</label>
-        {{end}}
-        <textarea name='content'>{{.Get "content"}}</textarea>
-    </div>
-    <div>
-          <label>Details:</label>
-          <textarea name='details'></textarea>
-    </div>
-    <div>
-          <label>Category:</label>
-          <select name="category">
-              <option value="student">Student</option>
-              <option value="staff">Staff</option>
-              <option value="applicant">Applicant</option>
-              <option value="research">Research</option>
+      <div class="mb-3">
+          <label for="title" class="form-label">Title:</label>
+          <input type="text" class="form-control" id="title" name="title" required>
+      </div>
 
+      <div class="mb-3">
+          <label for="genre" class="form-label">Genre:</label>
+          <select class="form-select" id="genre" name="genre" required>
+              <option value="horror">Horror</option>
+              <option value="comedy">Comedy</option>
+              <option value="drama">Drama</option>
+              <option value="scifi">Scifi</option>
           </select>
-    </div>
+      </div>
 
-    <div>
-        <input type='submit' value='Publish'>
-    </div>
+      <div class="mb-3">
+          <label for="rating" class="form-label">Rating:</label>
+          <input type="number" class="form-control" id="rating" name="rating" min="1" max="10" required>
+      </div>
+
+      <div class="mb-3">
+          <label for="sessionTime" class="form-label">Session Time:</label>
+          <input type="datetime-local" class="form-control" id="sessionTime" name="sessionTime" required>
+      </div>
+
+      <button class="btn btn-success" type="submit">Create Movie</button>
+
+
 
 
 {{end}}

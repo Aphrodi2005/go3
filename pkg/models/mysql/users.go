@@ -23,7 +23,7 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 	// ErrInvalidCredentials error.
 	var id int
 	var hashedPassword []byte
-	stmt := "SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE"
+	stmt := "SELECT id, hashed_password FROM users WHERE email = ? "
 	row := m.DB.QueryRow(stmt, email)
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
