@@ -3,29 +3,37 @@
 {{define "title"}}Movies #{{.Movies.ID}}{{end}}
 
 {{define "main"}}
+    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+
+
     {{with .Movies}}
+
     <div class='movies'>
         <div class='metadata'>
             <strong>{{.Title}}</strong>
             <span>#{{.ID}}</span>
         </div>
-        <pre><code>{{.Content}}</code></pre>
+
+
+        <div class='metadata'>
+                <p>Genre: {{.Genre}} </p>
+        </div>
+
+        <div class='metadata'>
+                <p>Rating: {{.Rating}} </p>
+        </div>
+
         <div class='metadata'>
            <time>Created: {{.SessionTime}}</time>
         </div>
-        {{if .IsAuthenticated}}
-            {{if .IsTeacher}}
-                <div class='actions'>
-                    <form action='/movies/update/{id}' method='GET'>
-                        <button>Edit</button>
-                    </form>
-                    <form action='/movies/delete/{id}' method='DELETE'>
-                        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-                        <button>Delete</button>
-                    </form>
-                </div>
-            {{end}}
-        {{end}}
+
+
+
+
+
+
+
     </div>
+
     {{end}}
 {{end}}

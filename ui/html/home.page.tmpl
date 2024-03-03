@@ -21,24 +21,14 @@
             <td>#{{.Genre}}</td>
             <td>#{{.Rating}}</td>
             <td>{{.SessionTime}}</td>
+
             <td>
                 {{if .IsAdmin}}
-                    <button class="btn btn-primary mb-4" onclick="toggleUpdateForm('{{ .ID }}')">Update</button>
-                    <form id="update-form-{{ .ID }}" method="POST" action="/updateMovie" style="display: none;">
-                        <input type="hidden" name="id" value="{{ .ID }}">
-                        <!-- Update form fields -->
-                    </form>
-                    <form id="delete-form-{{ .ID }}" onsubmit="deleteMovie('{{ .ID }}'); return false;">
-                        <input type="hidden" name="id" value="{{ .ID }}">
-                        <button class="btn btn-danger delete-movie-btn" type="submit">Delete</button>
-                    </form>
-                {{else}}
-                    <form method="POST" action="/buyTicket">
-                        <input type="hidden" name="movie_id" value="{{ .ID }}">
-                        <input type="hidden" name="movie_title" value="{{ .Title }}">
-                        <input type="hidden" name="session_time" value="{{ .SessionTime }}">
-                        <button class="btn btn-success buy-ticket-btn" type="submit">Buy Ticket</button>
-                    </form>
+
+
+                   <a href="/movies/delete?={{.ID}}" onclick=" return confirm('Delete this movie?') "> Delete</a>
+
+
                 {{end}}
             </td>
         </tr>

@@ -9,16 +9,19 @@ import (
 )
 
 type templateData struct {
-	CSRFToken       string
-	CurrentYear     int
-	Flash           string
+	CSRFToken   string
+	CurrentYear int
+	Flash       string
+	Form        *forms.Form
+
+	Movies  *models.Movie
+	Movie2s []*models.Movie
+
+	User   *models.User
+	Ticket *models.Ticket
+
 	IsAuthenticated bool
-	Form            *forms.Form
-	Movies          *models.Movie
-	Movie2s         []*models.Movie
 	IsAdmin         bool
-	User            *models.User
-	Ticket          *models.Ticket
 }
 
 func humanDate(t time.Time) string {

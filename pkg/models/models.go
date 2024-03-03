@@ -11,9 +11,11 @@ const (
 )
 
 var (
-	ErrNoRecord           = errors.New("models: no matching record found")
+	ErrNoRecord = errors.New("models: no matching record found")
+
 	ErrInvalidCredentials = errors.New("models: invalid credentials")
-	ErrDuplicateEmail     = errors.New("models: duplicate email")
+
+	ErrDuplicateEmail = errors.New("models: duplicate email")
 )
 
 var (
@@ -30,6 +32,7 @@ type Movie struct {
 	CSRFToken   string
 	IsAdmin     string
 }
+
 type User struct {
 	ID             int
 	Name           string
@@ -38,6 +41,7 @@ type User struct {
 	Created        time.Time
 	Role           string
 }
+
 type Ticket struct {
 	ID          int
 	UserID      int

@@ -195,6 +195,7 @@ func (app *application) deleteMovie(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "signup.page.tmpl", &templateData{
 		Form: forms.New(nil),
@@ -202,15 +203,14 @@ func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
-	// Parse the form data.
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
-	// Validate the form contents using the form helper we made earlier.
+
 	form := forms.New(r.PostForm)
-	form.Required("name", "email", "password", "role")
+	form.Required("name", "email", "password")
 	form.MaxLength("name", 255)
 	form.MaxLength("email", 255)
 	form.MatchesPattern("email", forms.EmailRX)
@@ -220,15 +220,10 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		app.render(w, r, "signup.page.tmpl", &templateData{Form: form})
 		return
 	}
-	role := form.Get("role")
-	if role == "admin" {
-		app.session.Put(r, "role", models.RoleAdmin)
-	}
-	if role == "supplier" {
-		app.session.Put(r, "role", models.Rolesupplier)
-	}
 
-	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"), form.Get("role"))
+	// Try to create a new user record in the database. If the email already exists
+	// add an error message to the form and re-display it.
+	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("role"), form.Get("password"))
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			form.Errors.Add("email", "Address is already in use")
@@ -238,8 +233,13 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	// Otherwise add a confirmation flash message to the session confirming that
+	// their signup worked and asking them to log in.
 	app.session.Put(r, "flash", "Your signup was successful. Please log in.")
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+	// And redirect the user to the login page.
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
@@ -254,6 +254,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
+
 	// Check whether the credentials are valid. If they're not, add a generic error
 	// message to the form failures map and re-display the login page.
 	form := forms.New(r.PostForm)
@@ -268,10 +269,12 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Add the ID of the current user to the session, so that they are now 'logged
+	// in'.
 	app.session.Put(r, "authenticatedUserID", id)
 
 	// Redirect the user to the create snippet page.
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/movies/create", http.StatusSeeOther)
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
@@ -283,13 +286,7 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	app.session.Put(r, "flash", "You've been logged out successfully!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-func (app *application) isAuthenticated(r *http.Request) bool {
-	return app.session.Exists(r, "authenticatedUserID")
-}
-func (app *application) isAdmin(r *http.Request) bool {
-	role := app.session.GetString(r, "role")
-	return role == models.RoleAdmin
-}
+
 func (app *application) buyTicket(w http.ResponseWriter, r *http.Request) {
 	// Check if the user is authenticated
 	if !app.isAuthenticated(r) {

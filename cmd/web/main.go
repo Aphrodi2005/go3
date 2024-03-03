@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+type contextKey string
+
+const contextKeyIsAuthenticated = contextKey("isAuthenticated")
+const contextKeyIsAdmin = contextKey("isAdmin")
+
 type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger

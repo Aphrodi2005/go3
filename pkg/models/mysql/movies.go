@@ -41,13 +41,11 @@ func (m *MovieModel) Delete(id int) error {
 
 	_, err := m.DB.Exec(stmt, id)
 	if err != nil {
-		if isDuplicateError(err) {
-			return models.ErrDuplicate
-		}
 		return err
 	}
 	return nil
 }
+
 func isDuplicateError(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "Error 1062:")
 }

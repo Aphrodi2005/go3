@@ -16,43 +16,42 @@
                   {{if .IsAuthenticated}}
                               {{if .IsAdmin}}
                                   <p>Admin</p>
-
                               {{else}}
                                   <p>Supplier</p>
                               {{end}}
-                          {{end}}
+                  {{end}}
 
     </header>
     <nav>
         <div>
             <a href='/'>Home</a>
-            {{if .IsAuthenticated}}
+            
+                {{if .IsAuthenticated}}
+                     {{if .IsAdmin}}
+                        <a href='/movies/create'>Add movie</a>
+                     {{end}}
+                {{end}}
 
- {{if .IsAdmin}}
-              <a href='/movies/create'>Create movies</a>
-   {{end}}
-            <a href='/genre/horror'>Horror</a>
-            <a href='/genre/comedy'>Comedy</a>
-            <a href='/genre/drama'>Drama</a>
-            <a href='/genre/scifi'>Scifi</a>
-            {{end}}
+                     <a href='/genre/horror'>Horror</a>
+                     <a href='/genre/comedy'>Comedy</a>
+                     <a href='/genre/drama'>Drama</a>
+                     <a href='/genre/scifi'>Scifi</a>
         </div>
 
-        <div>
-            {{if .IsAuthenticated}}
-            <form action='/user/logout' method='POST'>
-                <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
-                <button>Logout</button>
-            </form>
-            {{else}}
-            <a href='/user/signup'>Signup</a>
-            <a href='/user/login'>Login</a>
-            <form action='/user/logout' method='POST'>
-                <button>Logout</button>
-            </form>
-            {{end}}
-        </div>
+            <div>
+                {{if .IsAuthenticated}}
+                    <form action='/user/logout' method='POST'>
+                        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                        <button>Logout</button>
+                    </form>
+                {{else}}
+                    <a href='/user/signup'>Signup</a>
+                    <a href='/user/login'>Login</a>
+                {{end}}
+            </div>
+
     </nav>
+    
     <main>
         {{with .Flash}}
         <div class='flash'>{{.}}</div>
