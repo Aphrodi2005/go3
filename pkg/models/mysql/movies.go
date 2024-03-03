@@ -12,7 +12,7 @@ type MovieModel struct {
 	DB *sql.DB
 }
 
-func (m *MovieModel) Create(title, genre string, rating int, sessionTime time.Time) error {
+func (m *MovieModel) Create(title, genre string, rating float64, sessionTime time.Time) error {
 	stmt := `INSERT INTO movies (title, genre, rating, sessionTime) VALUES (?, ?, ?, ?)`
 
 	_, err := m.DB.Exec(stmt, title, genre, rating, sessionTime)
@@ -25,7 +25,7 @@ func (m *MovieModel) Create(title, genre string, rating int, sessionTime time.Ti
 	return nil
 }
 
-func (m *MovieModel) Update(title, genre string, id, rating int, sessionTime time.Time) error {
+func (m *MovieModel) Update(title, genre string, id int, rating float64, sessionTime time.Time) error {
 	stmt := `UPDATE movies SET title=?, genre=?, rating=?, sessionTime=? WHERE id=?`
 	_, err := m.DB.Exec(stmt, title, genre, rating, sessionTime, id)
 	if err != nil {

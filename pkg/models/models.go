@@ -25,7 +25,7 @@ type Movie struct {
 	ID          int
 	Title       string
 	Genre       string
-	Rating      int
+	Rating      float64
 	SessionTime time.Time
 	CSRFToken   string
 	IsAdmin     string

@@ -105,7 +105,7 @@ func (app *application) createMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.movies.Create(title, genre, rating, sessionTime)
+	err = app.movies.Create(title, genre, float64(rating), sessionTime)
 	if errors.Is(err, models.ErrDuplicate) {
 		app.clientError(w, http.StatusBadRequest)
 		return
@@ -162,7 +162,7 @@ func (app *application) updateMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.movies.Update(title, genre, id, rating, sessionTime)
+	err = app.movies.Update(title, genre, id, float64(rating), sessionTime)
 	if errors.Is(err, models.ErrDuplicate) {
 		app.clientError(w, http.StatusBadRequest)
 		return
