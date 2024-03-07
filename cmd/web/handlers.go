@@ -19,11 +19,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	isAdmin := app.isAdmin(r)
 
 	app.render(w, r, "home.page.tmpl", &templateData{
 		Movie2s: s,
-		IsAdmin: isAdmin,
 	})
 }
 
@@ -67,7 +65,7 @@ func (app *application) genre(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createMoviesForm(w http.ResponseWriter, r *http.Request) {
-	if !app.isAuthenticated(r) || !app.isAdmin(r) {
+	if !app.isAuthenticated(r) {
 		app.clientError(w, http.StatusForbidden)
 		return
 	}
@@ -87,11 +85,16 @@ func (app *application) createMovies(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-
+	form := forms.New(r.PostForm)
 	title := r.PostForm.Get("title")
 	genre := r.PostForm.Get("genre")
 	ratingStr := r.PostForm.Get("rating")
 	sessionTimeStr := r.PostForm.Get("sessionTime")
+
+	if !form.Valid() {
+		app.render(w, r, "create.page.tmpl", &templateData{Form: form})
+		return
+	}
 
 	rating, err := strconv.Atoi(ratingStr)
 	if err != nil {
@@ -105,7 +108,7 @@ func (app *application) createMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.movies.Create(title, genre, float64(rating), sessionTime)
+	id, err := app.movies.Create(title, genre, float64(rating), sessionTime)
 	if errors.Is(err, models.ErrDuplicate) {
 		app.clientError(w, http.StatusBadRequest)
 		return
@@ -114,10 +117,10 @@ func (app *application) createMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	app.session.Put(r, "flash", "Snippet successfully created!")
-	http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/movies/%d", id), http.StatusSeeOther)
 }
 func (app *application) updateMoviesForm(w http.ResponseWriter, r *http.Request) {
-	if !app.isAuthenticated(r) || !app.isAdmin(r) {
+	if !app.isAuthenticated(r) {
 		app.clientError(w, http.StatusForbidden)
 		return
 	}

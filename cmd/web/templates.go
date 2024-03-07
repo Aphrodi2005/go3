@@ -21,7 +21,6 @@ type templateData struct {
 	Ticket *models.Ticket
 
 	IsAuthenticated bool
-	IsAdmin         bool
 }
 
 func humanDate(t time.Time) string {

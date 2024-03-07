@@ -23,13 +23,9 @@
             <td>{{.SessionTime}}</td>
 
             <td>
-                {{if .IsAdmin}}
-
-
                    <a href="/movies/delete?={{.ID}}" onclick=" return confirm('Delete this movie?') "> Delete</a>
 
 
-                {{end}}
             </td>
         </tr>
         {{end}}

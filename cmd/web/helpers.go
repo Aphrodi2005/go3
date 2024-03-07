@@ -36,7 +36,6 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 
 	td.IsAuthenticated = app.isAuthenticated(r)
 
-	td.IsAdmin = app.isAdmin(r)
 	return td
 
 }
@@ -65,12 +64,4 @@ func (app *application) isAuthenticated(r *http.Request) bool {
 		return false
 	}
 	return isAuthenticated
-}
-
-func (app *application) isAdmin(r *http.Request) bool {
-	isAdmin, ok := r.Context().Value(contextKeyIsAdmin).(bool)
-	if !ok {
-		return false
-	}
-	return isAdmin
 }

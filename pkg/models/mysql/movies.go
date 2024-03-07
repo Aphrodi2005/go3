@@ -12,17 +12,20 @@ type MovieModel struct {
 	DB *sql.DB
 }
 
-func (m *MovieModel) Create(title, genre string, rating float64, sessionTime time.Time) error {
+func (m *MovieModel) Create(title, genre string, rating float64, sessionTime time.Time) (int, error) {
 	stmt := `INSERT INTO movies (title, genre, rating, sessionTime) VALUES (?, ?, ?, ?)`
 
-	_, err := m.DB.Exec(stmt, title, genre, rating, sessionTime)
+	result, err := m.DB.Exec(stmt, title, genre, rating, sessionTime)
 	if err != nil {
-		if isDuplicateError(err) {
-			return models.ErrDuplicate
-		}
-		return err
+		return 0, err
 	}
-	return nil
+
+	id, err := result.LastInsertId()
+	if err != nil || isDuplicateError(err) {
+		return 0, models.ErrDuplicate
+	}
+
+	return int(id), nil
 }
 
 func (m *MovieModel) Update(title, genre string, id int, rating float64, sessionTime time.Time) error {

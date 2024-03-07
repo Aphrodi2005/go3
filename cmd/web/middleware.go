@@ -104,31 +104,3 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-
-func (app *application) requireAdmin(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if !app.isAdmin(r) {
-			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
-			return
-		}
-
-		w.Header().Add("Cache-Control", "no-store")
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (app *application) admin(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Check if a authenticatedUserID value exists in the session. If this *isn't
-		// present* then call the next handler in the chain as normal.
-		exists := app.session.Exists(r, "adminUserRole")
-		if !exists {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		ctx := context.WithValue(r.Context(), contextKeyIsAdmin, true)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}

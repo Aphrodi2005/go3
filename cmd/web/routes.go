@@ -10,7 +10,7 @@ func (app *application) routes() http.Handler {
 
 	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
-	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate, app.admin)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate)
 
 	mux := pat.New()
 
@@ -20,10 +20,10 @@ func (app *application) routes() http.Handler {
 	mux.Get("/genre/drama", dynamicMiddleware.ThenFunc(app.genre))
 	mux.Get("/genre/scifi", dynamicMiddleware.ThenFunc(app.genre))
 
-	mux.Get("/movies/create", dynamicMiddleware.Append(app.requireAuthentication, app.requireAdmin).ThenFunc(app.createMoviesForm))
-	mux.Post("/movies/create", dynamicMiddleware.Append(app.requireAuthentication, app.requireAdmin).ThenFunc(app.createMovies))
+	mux.Get("/movies/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createMoviesForm))
+	mux.Post("/movies/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createMovies))
 	mux.Post("/updateMovie", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.updateMovie))
-	mux.Del("/movies/delete", dynamicMiddleware.Append(app.requireAuthentication, app.requireAdmin).ThenFunc(app.deleteMovie))
+	mux.Del("/movies/delete", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.deleteMovie))
 	mux.Get("/movies/:id", dynamicMiddleware.ThenFunc(app.showMovies))
 
 	mux.Get("/user/signup", dynamicMiddleware.ThenFunc(app.signupUserForm))

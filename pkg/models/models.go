@@ -30,7 +30,6 @@ type Movie struct {
 	Rating      float64
 	SessionTime time.Time
 	CSRFToken   string
-	IsAdmin     string
 }
 
 type User struct {

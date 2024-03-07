@@ -13,13 +13,7 @@
 <body>
     <header>
         <h1><a href='/'>AITU Movies</a></h1>
-                  {{if .IsAuthenticated}}
-                              {{if .IsAdmin}}
-                                  <p>Admin</p>
-                              {{else}}
-                                  <p>Supplier</p>
-                              {{end}}
-                  {{end}}
+
 
     </header>
     <nav>
@@ -27,9 +21,7 @@
             <a href='/'>Home</a>
             
                 {{if .IsAuthenticated}}
-                     {{if .IsAdmin}}
                         <a href='/movies/create'>Add movie</a>
-                     {{end}}
                 {{end}}
 
                      <a href='/genre/horror'>Horror</a>
